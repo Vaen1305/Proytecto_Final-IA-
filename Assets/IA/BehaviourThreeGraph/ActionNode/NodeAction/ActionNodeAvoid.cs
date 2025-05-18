@@ -6,11 +6,13 @@ using BehaviorDesigner.Runtime.Tasks;
 [TaskCategory("MyAI/Action")]
 public class ActionNodeAvoid : ActionNodeAction
 {
+    // --- Unity Methods ---
     public override void OnStart()
     {
         base.OnStart();
     }
 
+    // --- Behavior Tree Logic ---
     public override TaskStatus OnUpdate()
     {
         if (_IACharacterVehiculo.health.IsDead)
@@ -20,6 +22,7 @@ public class ActionNodeAvoid : ActionNodeAction
         return TaskStatus.Success;
     }
 
+    // --- Custom Logic ---
     private void Avoid()
     {
         // Logic to avoid Jabali

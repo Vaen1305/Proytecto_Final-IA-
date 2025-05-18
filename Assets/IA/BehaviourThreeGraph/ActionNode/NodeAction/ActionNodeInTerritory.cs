@@ -6,11 +6,13 @@ using BehaviorDesigner.Runtime.Tasks;
 [TaskCategory("MyAI/Action")]
 public class ActionNodeInTerritory : ActionNodeAction
 {
+    // --- Unity Methods ---
     public override void OnStart()
     {
         base.OnStart();
     }
 
+    // --- Behavior Tree Logic ---
     public override TaskStatus OnUpdate()
     {
         if (_IACharacterVehiculo.health.IsDead)
