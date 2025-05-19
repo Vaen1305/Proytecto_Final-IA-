@@ -18,7 +18,7 @@ public class DataViewBase
     public float Distance { get => distance; set => distance = value; }
 
     [Header("----- Owner ----- ")]
-    public Health Owner;
+    public JabaliHealth Owner;
 
 
     #endregion
@@ -216,12 +216,12 @@ public class IAEyeBase : MonoBehaviour
 
     protected float Framerate = 0;
     #endregion
-    public Health health { get; set; }
+    public JabaliHealth health { get; set; }
 
     public bool IsDrawGizmo = false;
     public Transform AimOffset;
-    public Health ViewEnemy;
-    public Health ViewAllie;// { get; set; }
+    public JabaliHealth ViewEnemy;
+    public JabaliHealth ViewAllie;// { get; set; }
 
     public Vector3 Target { get; set; }
 
@@ -287,7 +287,7 @@ public class IAEyeBase : MonoBehaviour
 
     public virtual void LoadComponent()
     {
-        health = GetComponent<Health>();
+        health = GetComponent<JabaliHealth>();
         mainDataView.Owner = health;
         Framerate = 0;
         index = 0;
@@ -339,7 +339,7 @@ public class IAEyeBase : MonoBehaviour
             if (this.IsNotIsThis(this.gameObject, obj))
             {
                 
-                Health Scanhealth = obj.GetComponent<Health>();
+                JabaliHealth Scanhealth = obj.GetComponent<JabaliHealth>();
                 if (Scanhealth != null &&
                     obj.activeSelf &&
                     !Scanhealth.IsDead &&
@@ -357,7 +357,7 @@ public class IAEyeBase : MonoBehaviour
 
     }
 
-    private void ExtractViewEnemy(ref float min_dist, Health _health)
+    private void ExtractViewEnemy(ref float min_dist, JabaliHealth _health)
     {
         
         if (!IsAllies(_health))
@@ -381,7 +381,7 @@ public class IAEyeBase : MonoBehaviour
 
     }
 
-    public virtual bool IsAllies(Health heatlhScan)
+    public virtual bool IsAllies(JabaliHealth heatlhScan)
     {
         for (int j = 0; (health != null && j < health.typeAgentAllies.Count); j++)
         {

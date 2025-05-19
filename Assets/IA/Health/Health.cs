@@ -10,7 +10,7 @@ public enum UnitGame
     Soldier,
     None
 }
-public class Health : MonoBehaviour
+public class JabaliHealth : MonoBehaviour
 {
     [Header("imageUI")]
     public Image HealthBarLocal;
@@ -23,7 +23,7 @@ public class Health : MonoBehaviour
 
     [Header("AimOffSet")]
     public Transform AimOffset;
-    public Health HurtingMe;
+    public JabaliHealth HurtingMe;
 
     [Header("Type Agent")]
     public TypeAgent typeAgent;
@@ -35,7 +35,7 @@ public class Health : MonoBehaviour
     public UnitGame _UnitGame;
     public bool IsCantView=true;
 
-    IEnumerator HurtingMeActive(Health enemy)
+    IEnumerator HurtingMeActive(JabaliHealth enemy)
     {
         HurtingMe = enemy;
         yield return new WaitForSeconds(3);
@@ -43,7 +43,7 @@ public class Health : MonoBehaviour
         StopCoroutine(HurtingMeroutine);
     }
 
-    public virtual void Damage(int damage,Health enemy)
+    public virtual void Damage(int damage,JabaliHealth enemy)
     {
         
         if (Importal) return;

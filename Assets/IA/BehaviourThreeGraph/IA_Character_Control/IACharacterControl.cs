@@ -7,13 +7,13 @@ using UnityEngine.AI;
 public class IACharacterControl : MonoBehaviour
 {
     public NavMeshAgent agent { get; set; }
-    public Health health { get; set; }
+    public JabaliHealth health { get; set; }
     public IAEyeBase AIEye { get; set; }
 
     public virtual void LoadComponent()
     {
         agent = GetComponent<NavMeshAgent>();
-        health = GetComponent<Health>();
+        health = GetComponent<JabaliHealth>();
         AIEye = GetComponent<IAEyeBase>();
 
     }
