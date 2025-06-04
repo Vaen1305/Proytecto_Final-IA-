@@ -9,45 +9,28 @@ public class ActionWander : ActionNodeVehicle
     {
         base.OnStart();
     }
+    
     public override TaskStatus OnUpdate()
     {
         if(_IACharacterVehiculo.health.IsDead)
             return TaskStatus.Failure;
 
-        SwitchUnit();
-
-        return TaskStatus.Success;
-
-    }
-    void SwitchUnit()
-    {
-
-
-        switch (_UnitGame)
+        // Ejecutar movimiento de deambular
+        if (_UnitGame == UnitGame.Ciervo)
         {
-            case UnitGame.Zombie:
-                if(_IACharacterVehiculo is IACharacterVehiculoZombie)
-                {
-                    ((IACharacterVehiculoZombie)_IACharacterVehiculo).MoveToWander();
-                    
-                }
-
-                break;
-            case UnitGame.Soldier:
-                if (_IACharacterVehiculo is IACharacterVehiculoSoldier)
-                {
-                    ((IACharacterVehiculoSoldier)_IACharacterVehiculo).MoveToWander();
-
-                }
-                break;
-            case UnitGame.None:
-                break;
-            default:
-                break;
+            // Lógica específica para Ciervo
+            IACharacterVehiculoCiervo ciervoVehicle = _IACharacterVehiculo as IACharacterVehiculoCiervo;
+            if (ciervoVehicle != null)
+            {
+                ciervoVehicle.MoveToWander();
+            }
         }
-
-
-
+        else
+        {
+            // Lógica general para otros tipos
+            _IACharacterVehiculo.MoveToWander();
+        }
+        
+        return TaskStatus.Running; // Continúa ejecutándose
     }
-
 }

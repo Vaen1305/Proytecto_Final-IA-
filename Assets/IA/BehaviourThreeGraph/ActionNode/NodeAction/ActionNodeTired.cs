@@ -13,19 +13,34 @@ public class ActionNodeTired : ActionNodeAction
 
     public override TaskStatus OnUpdate()
     {
+        if (_IACharacterVehiculo == null || _IACharacterVehiculo.health == null)
+        {
+            return TaskStatus.Failure;
+        }
+
         if (_IACharacterVehiculo.health.IsDead)
             return TaskStatus.Failure;
 
-        // Logic to check if the wolf is tired
         if (IsTired())
+        {
             return TaskStatus.Success;
-
+        }
+        
         return TaskStatus.Failure;
     }
 
     private bool IsTired()
     {
-        // Replace with actual logic to determine if the wolf is tired
-        return _IACharacterVehiculo.health.health < (_IACharacterVehiculo.health.healthMax * 0.5f);
+        if (_UnitGame == UnitGame.Ciervo)
+        {
+            // Lógica específica para Ciervo
+            IACharacterActionsCiervo ciervoActions = _IACharacterActions as IACharacterActionsCiervo;
+            if (ciervoActions != null)
+            {
+                return ciervoActions.IsTired();
+            }
+        }
+          // Lógica general para otros tipos
+        return _IACharacterVehiculo.health.health < (_IACharacterVehiculo.health.healthMax * 0.3f);
     }
 }

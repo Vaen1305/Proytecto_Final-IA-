@@ -6,26 +6,41 @@ using BehaviorDesigner.Runtime.Tasks;
 [TaskCategory("MyAI/Action")]
 public class ActionNodeAvoid : ActionNodeAction
 {
-    // --- Unity Methods ---
     public override void OnStart()
     {
         base.OnStart();
     }
 
-    // --- Behavior Tree Logic ---
     public override TaskStatus OnUpdate()
     {
+        if (_IACharacterVehiculo == null || _IACharacterVehiculo.health == null)
+        {
+            return TaskStatus.Failure;
+        }
+
         if (_IACharacterVehiculo.health.IsDead)
             return TaskStatus.Failure;
 
-        Avoid();
-        return TaskStatus.Success;
+        ExecuteAvoid();
+        return TaskStatus.Running; // Usar Running para que continue evitando
     }
 
-    // --- Custom Logic ---
-    private void Avoid()
+    private void ExecuteAvoid()
     {
-        // Logic to avoid Jabali
-        _IACharacterVehiculo.MoveToEvadEnemy();
+        // Verificar si es un Ciervo y usar su método específico
+        if (_UnitGame == UnitGame.Ciervo && _IACharacterActions is IACharacterActionsCiervo)
+        {
+            ((IACharacterActionsCiervo)_IACharacterActions).Avoid();
+        }
+        else
+        {
+            // Lógica genérica de evitar
+            if (_IACharacterVehiculo.AIEye.ViewEnemy != null)
+            {
+                _IACharacterVehiculo.MoveToEvadEnemy();
+            }
+        }
+        
+        Debug.Log("Ciervo evitando amenaza");
     }
 }
