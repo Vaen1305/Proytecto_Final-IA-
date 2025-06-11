@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviorDesigner.Runtime.Tasks;
+
 [TaskCategory("MyAI/Move")]
 public class ActionFollowEnemy : ActionNodeVehicle
 {
@@ -9,45 +10,42 @@ public class ActionFollowEnemy : ActionNodeVehicle
     {
         base.OnStart();
     }
+    
     public override TaskStatus OnUpdate()
     {
         if(_IACharacterVehiculo.health.IsDead)
             return TaskStatus.Failure;
 
-        SwitchUnit();
+        // Verificar si hay enemigo en vista
+        if (_IACharacterVehiculo.AIEye.ViewEnemy == null)
+            return TaskStatus.Failure;
 
-        return TaskStatus.Success;
-
-    }
-    void SwitchUnit()
-    {
-
-
-        switch (_UnitGame)
+        // Ejecutar seguimiento basado en tipo de unidad
+        if (_UnitGame == UnitGame.Zombie)
         {
-            case UnitGame.Zombie:
-                if(_IACharacterVehiculo is IACharacterVehiculoZombie)
-                {
-                    ((IACharacterVehiculoZombie)_IACharacterVehiculo).MoveToEnemy();
-                    ((IACharacterVehiculoZombie)_IACharacterVehiculo).LookEnemy();
-                }
-
-                break;
-            case UnitGame.Soldier:
-                if (_IACharacterVehiculo is IACharacterVehiculoSoldier)
-                {
-                    ((IACharacterVehiculoSoldier)_IACharacterVehiculo).MoveToEnemy();
-                    ((IACharacterVehiculoSoldier)_IACharacterVehiculo).LookEnemy();
-                }
-                break;
-            case UnitGame.None:
-                break;
-            default:
-                break;
+            IACharacterVehiculoZombie zombieVehicle = _IACharacterVehiculo as IACharacterVehiculoZombie;
+            if (zombieVehicle != null)
+            {
+                zombieVehicle.MoveToEnemy(); // Método heredado de la clase base
+                zombieVehicle.LookEnemy();   // Método heredado de la clase base
+            }
         }
-
-
-
+        else if (_UnitGame == UnitGame.Soldier)
+        {
+            IACharacterVehiculoSoldier soldierVehicle = _IACharacterVehiculo as IACharacterVehiculoSoldier;
+            if (soldierVehicle != null)
+            {
+                soldierVehicle.MoveToEnemy(); // Método heredado de la clase base
+                soldierVehicle.LookEnemy();   // Método heredado de la clase base
+            }
+        }
+        else
+        {
+            // Comportamiento general
+            _IACharacterVehiculo.MoveToEnemy();
+            _IACharacterVehiculo.LookEnemy();
+        }
+        
+        return TaskStatus.Running;
     }
-
 }

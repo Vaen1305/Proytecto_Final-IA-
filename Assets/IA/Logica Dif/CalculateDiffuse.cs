@@ -4,74 +4,122 @@ using UnityEngine;
 
 public class CalculateDiffuse : MonoBehaviour
 {
-
+    [Header("Conjuntos Difusos")]
     public FuzzyFunction cerca = new FuzzyFunction();
     public FuzzyFunction medio = new FuzzyFunction();
     public FuzzyFunction lejos = new FuzzyFunction();
+    
+    [Header("Variables de Control")]
     public float speedRotation;
+    public float DistanceRay = 10f;
+    public LayerMask mask = 1;
     
-    public float DistanceRay;
+    [Header("Sensores")]
     public Transform pointSensor;
-    public LayerMask mask;
-
-    public RaycastHit hit;
-    public bool Collider { get; set; }
-
-    public bool IsGizmos;
-    public Color ColorGizmos;
     
-    // Start is called before the first frame update
+    [Header("Estado")]
+    public bool Collider = false;
+    public RaycastHit hit;
+    
     void Start()
     {
-        
+        if (pointSensor == null)
+            pointSensor = transform;
+            
+        // Inicializar conjuntos difusos si no están configurados
+        InitializeFuzzySets();
     }
-
-    // Update is called once per frame
+    
     void Update()
     {
-        
+        DetectObstacles();
+    }
+    
+    void DetectObstacles()
+    {
         if (Physics.Raycast(pointSensor.position, pointSensor.forward, out hit, DistanceRay, mask))
         {
             Collider = true;
+            float distancia = hit.distance;
             
-            CalculateAngle(hit.distance);
+            // Aplicar lógica difusa
+            CalculateAngle(distancia);
         }
         else
         {
-            speedRotation = 0;
             Collider = false;
-             
+            speedRotation = 0;
         }
-           
-
     }
-
-    void CalculateAngle(float front)
+    
+    void CalculateAngle(float distancia)
     {
-
-
-        speedRotation = (cerca.Evaluate(front) * cerca.Singleton +
-                    medio.Evaluate(front) * medio.Singleton +
-                    lejos.Evaluate(front) * lejos.Singleton) /
-                    (cerca.F_y + medio.F_y + lejos.F_y);
-
+        // Evaluar conjuntos difusos
+        float cercaValue = cerca.Evaluate(distancia);
+        float medioValue = medio.Evaluate(distancia);
+        float lejosValue = lejos.Evaluate(distancia);
+        
+        // Defuzzificación usando método del centroide
+        float numerador = (cercaValue * cerca.Singleton) + 
+                         (medioValue * medio.Singleton) + 
+                         (lejosValue * lejos.Singleton);
+        
+        float denominador = cercaValue + medioValue + lejosValue;
+        
+        if (denominador > 0)
+            speedRotation = numerador / denominador;
+        else
+            speedRotation = 0;
+            
+        // Normalizar la salida
+        speedRotation = Mathf.Clamp(speedRotation, 0f, 5f);
     }
-    private void OnDrawGizmos()
+    
+    void InitializeFuzzySets()
     {
-        if (!IsGizmos) return;
-        Gizmos.color = ColorGizmos;
-        Vector3 pos = pointSensor.position + pointSensor.forward * DistanceRay;
-        Gizmos.DrawSphere(pos, 0.2f);
-        Gizmos.DrawLine(pointSensor.position, pos);
-
-        if(Collider)
+        // Configurar conjunto "cerca" (0 a 3 metros)
+        if (cerca.Functioncurves == null || cerca.Functioncurves.keys.Length == 0)
         {
-            Vector3 posNormal = hit.point + hit.normal*2;
-            Gizmos.DrawSphere(posNormal, 0.2f);
-            Gizmos.DrawLine(hit.point, posNormal);
-
+            cerca.Functioncurves = new AnimationCurve();
+            cerca.Functioncurves.AddKey(0f, 1f);
+            cerca.Functioncurves.AddKey(2f, 1f);
+            cerca.Functioncurves.AddKey(4f, 0f);
+            cerca.Singleton = 3f; // Velocidad alta de rotación
         }
-
-
+        
+        // Configurar conjunto "medio" (2 a 6 metros)
+        if (medio.Functioncurves == null || medio.Functioncurves.keys.Length == 0)
+        {
+            medio.Functioncurves = new AnimationCurve();
+            medio.Functioncurves.AddKey(2f, 0f);
+            medio.Functioncurves.AddKey(4f, 1f);
+            medio.Functioncurves.AddKey(6f, 0f);
+            medio.Singleton = 1.5f; // Velocidad media de rotación
+        }
+        
+        // Configurar conjunto "lejos" (5 metros en adelante)
+        if (lejos.Functioncurves == null || lejos.Functioncurves.keys.Length == 0)
+        {
+            lejos.Functioncurves = new AnimationCurve();
+            lejos.Functioncurves.AddKey(5f, 0f);
+            lejos.Functioncurves.AddKey(7f, 1f);
+            lejos.Functioncurves.AddKey(10f, 1f);
+            lejos.Singleton = 0.5f; // Velocidad baja de rotación
+        }
+    }
+    
+    void OnDrawGizmos()
+    {
+        if (pointSensor != null)
+        {
+            Gizmos.color = Collider ? Color.red : Color.green;
+            Gizmos.DrawRay(pointSensor.position, pointSensor.forward * DistanceRay);
+            
+            if (Collider)
+            {
+                Gizmos.color = Color.yellow;
+                Gizmos.DrawSphere(hit.point, 0.3f);
+            }
+        }
     }
 }

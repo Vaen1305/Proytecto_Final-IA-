@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviorDesigner.Runtime.Tasks;
+
 [TaskCategory("MyAI/Move")]
 public class ActionWander : ActionNodeVehicle
 {
@@ -22,13 +23,13 @@ public class ActionWander : ActionNodeVehicle
             IACharacterVehiculoCiervo ciervoVehicle = _IACharacterVehiculo as IACharacterVehiculoCiervo;
             if (ciervoVehicle != null)
             {
-                ciervoVehicle.MoveToWander();
+                ciervoVehicle.StartCiervoWandering(); // Método específico para ciervo
             }
         }
         else
         {
             // Lógica general para otros tipos
-            _IACharacterVehiculo.MoveToWander();
+            _IACharacterVehiculo.StartWandering(); // Método público agregado
         }
         
         return TaskStatus.Running; // Continúa ejecutándose

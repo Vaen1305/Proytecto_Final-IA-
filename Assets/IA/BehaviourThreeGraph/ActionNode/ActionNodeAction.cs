@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using BehaviorDesigner.Runtime.Tasks;
+
 [TaskCategory("MyAI/BaseClass")]
 public class ActionNodeAction : ActionNode
 {
@@ -40,7 +41,7 @@ public class ActionNodeAction : ActionNode
     public void RunAway()
     {
         // Logic to run away from the enemy
-        _IACharacterVehiculo.MoveToEvadEnemy();
+        _IACharacterVehiculo.MoveToEvadEnemy(); // Método corregido
     }
 
     public bool IsHungry()
@@ -64,6 +65,6 @@ public class ActionNodeAction : ActionNode
     public void Wander()
     {
         // Logic to wander around
-        _IACharacterVehiculo.MoveToWander();
+        _IACharacterVehiculo.StartWandering(); // Método corregido
     }
 }

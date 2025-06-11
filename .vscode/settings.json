@@ -56,5 +56,5 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Proytecto_Final-IA-.sln"
+    "dotnet.defaultSolution": "Proyecto_Final(IA).sln"
 }
